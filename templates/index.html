@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AITranscriptor - Speech to Text Transcription</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to AITranscriptor</h1>
+        <p>Upload your audio file to start transcription using the latest speech-to-text AI technology.</p>
+
+        <!-- Input Section with Deep Blue Background and Shadow -->
+        <div class="upload-section">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="audio_file" id="audioFile" accept="audio/*" required>
+                <span class="allowed-files">Allowed Files: MP4, MP3, WAV, FLAC</span>
+                <button type="submit" id="submitButton">Transcribe</button>
+            </form>
+        </div>
+
+        <!-- Message while transcribing -->
+        <div id="loadingMessage" class="loading-message" style="display: none;">
+            <p>Transcribing... Please wait.</p>
+        </div>
+
+        <!-- Transcription result section with transparent background -->
+        <div id="transcriptionSection" class="transcription-section">
+            <h3>Transcribed Audio:</h3>
+            <p id="transcribedText">Your transcribed text will appear here.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Powered by <span class="highlight">Assembly</span> & <span class="highlight">Dev Community</span></p>
+    </footer>
+
+    <script>
+        $(document).ready(function(){
+            $("#uploadForm").on("submit", function(event){
+                event.preventDefault();
+
+                // Show loading message
+                $("#loadingMessage").show();
+                $("#transcriptionSection").hide(); // Hide transcription section while waiting
+
+                let formData = new FormData();
+                formData.append("audio_file", $("#audioFile")[0].files[0]);
+
+                $.ajax({
+                    url: "/transcribe",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        // Hide loading message and show transcription result
+                        $("#loadingMessage").hide();
+                        $("#transcriptionSection").show();
+                        $("#transcribedText").html(response.transcription); // assuming the server returns the transcription
+                    },
+                    error: function(response) {
+                        // Hide loading message and show error
+                        $("#loadingMessage").hide();
+                        $("#transcriptionSection").show();
+                        $("#transcribedText").html('An error occurred: ' + response.responseJSON.error + ' Please try again');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
