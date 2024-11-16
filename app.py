@@ -5,7 +5,7 @@ import time
 
 app = Flask(__name__)
 
-ASSEMBLY_API_KEY = "af150f4d9e84484b94eb7ed32e711e88"  # Replace with your actual API key
+ASSEMBLY_API_KEY = "af150f4d9e84484b94eb7ed32e711e88"
 API_URL = "https://api.assemblyai.com/v2/transcript"
 UPLOAD_URL = "https://api.assemblyai.com/v2/upload"
 
